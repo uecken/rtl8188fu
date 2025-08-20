@@ -3,7 +3,7 @@
 # Cross-compilation for ARMv7l
 ARCH ?= arm
 CROSS_COMPILE ?= arm-linux-gnueabihf-
-KERNEL_SRC ?= /usr/src/linux-headers-6.8.0-65-generic
+KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
 
 # Set compiler for cross-compilation
 CC = $(CROSS_COMPILE)gcc
@@ -15,6 +15,11 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 
 EXTRA_CFLAGS += $(USER_EXTRA_CFLAGS)
 EXTRA_CFLAGS += -O1
+
+# ARMv7l specific flags
+ifeq ($(ARCH),arm)
+EXTRA_CFLAGS += -march=armv7-a -mfpu=neon
+endif
 #EXTRA_CFLAGS += -O3
 #EXTRA_CFLAGS += -Wall
 #EXTRA_CFLAGS += -Wextra
@@ -419,7 +424,17 @@ SUBARCH := $(shell uname -m | sed -e "s/i.86/i386/; s/ppc/powerpc/; s/armv.l/arm
 ARCH ?= $(SUBARCH)
 CROSS_COMPILE ?=
 KVER  := $(shell uname -r)
-KSRC := /lib/modules/$(KVER)/build
+KSRC := $(KERNEL_SRC)
+MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/
+INSTALL_PREFIX :=
+endif
+
+# ARMv7l (Yocto) environment settings
+ifeq ($(ARCH),arm)
+EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
+EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT
+KVER  := $(shell uname -r)
+KSRC := $(KERNEL_SRC)
 MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/
 INSTALL_PREFIX :=
 endif
