@@ -1,18 +1,4 @@
 # SPDX-License-Identifier: GPL-2.0
-
-# Cross-compilation for ARMv7l
-ARCH ?= arm
-CROSS_COMPILE ?= arm-linux-gnueabihf-
-KERNEL_SRC ?= /usr/src/linux-headers-6.8.0-65-generic
-
-# Set compiler for cross-compilation
-CC = $(CROSS_COMPILE)gcc
-LD = $(CROSS_COMPILE)ld
-AR = $(CROSS_COMPILE)ar
-NM = $(CROSS_COMPILE)nm
-STRIP = $(CROSS_COMPILE)strip
-OBJCOPY = $(CROSS_COMPILE)objcopy
-
 EXTRA_CFLAGS += $(USER_EXTRA_CFLAGS)
 EXTRA_CFLAGS += -O1
 #EXTRA_CFLAGS += -O3
