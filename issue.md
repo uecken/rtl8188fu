@@ -1,6 +1,8 @@
 
 ■環境
 uname -a
+Linux moment-ff1-8f1a85bc 6.6.48 #1 SMP PREEMPT Thu Aug 29 15:33:59 UTC 2024 armv7l GNU/Li
+
 RFIC: RTL8188FTV
 WiFi Module: RTL8188FTM
 Driver:/lib/modules/6.6.48/extra/rtl8188fu.ko
