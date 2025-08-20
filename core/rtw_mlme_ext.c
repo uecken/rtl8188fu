@@ -12002,6 +12002,8 @@ void mlmeext_joinbss_event_callback(_adapter *padapter, int join_res)
 	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
 #endif
 	struct security_priv *psecuritypriv = &padapter->securitypriv;
+	HAL_DATA_TYPE *pHalData = GET_HAL_DATA(padapter);
+	struct registry_priv *regsty = adapter_to_regsty(padapter);
 
 	if(join_res < 0)
 	{
@@ -12087,6 +12089,12 @@ void mlmeext_joinbss_event_callback(_adapter *padapter, int join_res)
 	if(get_iface_type(padapter) == IFACE_PORT0)
 		rtw_lps_ctrl_wk_cmd(padapter, LPS_CTRL_CONNECT, 0);
 #endif
+
+	// Apply txpower setting if configured via cfg80211
+	if (regsty->target_tx_pwr_valid == _TRUE) {
+		DBG_871X("Applying cfg80211 txpower setting on link established\n");
+		PHY_SetTxPowerLevel8188F(padapter, pHalData->CurrentChannel);
+	}
 
 #ifdef CONFIG_BEAMFORMING
 	if (psta)

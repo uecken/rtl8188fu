@@ -883,11 +883,47 @@ PHY_GetTxPowerIndex_8188F(
 )
 {
 	PHAL_DATA_TYPE		pHalData = GET_HAL_DATA(pAdapter);
+	struct registry_priv *regsty = adapter_to_regsty(pAdapter);
 	s8					txPower = 0, powerDiffByRate = 0, limit = 0;
 	BOOLEAN				bIn24G = _FALSE;
+	RATE_SECTION		rateSection;
 
 	/*DBG_871X("===>%s\n", __func__ ); */
 
+	// target_tx_pwrが設定されている場合はそれを使用
+	if (regsty->target_tx_pwr_valid == _TRUE) {
+		// RateからRateSectionを決定
+		if (IS_CCK_RATE(Rate)) {
+			rateSection = CCK;
+		} else if (MGN_6M <= Rate && Rate <= MGN_54M) {
+			rateSection = OFDM;
+		} else if (MGN_MCS0 <= Rate && Rate <= MGN_MCS7) {
+			rateSection = HT_MCS0_MCS7;
+		} else if (MGN_MCS8 <= Rate && Rate <= MGN_MCS15) {
+			rateSection = HT_MCS8_MCS15;
+		} else {
+			rateSection = OFDM; // デフォルト
+		}
+
+		// target_tx_pwrからtxpower indexを計算
+		s8 target_pwr = regsty->target_tx_pwr_2g[RFPath][rateSection];
+		if (target_pwr >= 0) {
+			// dBmをtxpower indexに変換（概算）
+			// 通常、1dBm = 約1-2のindex値
+			txPower = (s8)(target_pwr * 2); // 簡易変換
+			
+			// 範囲チェック
+			if (txPower > MAX_POWER_INDEX)
+				txPower = MAX_POWER_INDEX;
+			else if (txPower < 0)
+				txPower = 0;
+				
+			DBG_871X("Using target_tx_pwr: %d dBm -> index %d\n", target_pwr, txPower);
+			return (u8)txPower;
+		}
+	}
+
+	// 従来の方法でtxpowerを計算
 	txPower = (s8) PHY_GetTxPowerIndexBase(pAdapter, RFPath, Rate, BandWidth, Channel, &bIn24G);
 	powerDiffByRate = PHY_GetTxPowerByRate(pAdapter, BAND_ON_2_4G, ODM_RF_PATH_A, RF_1TX, Rate);
 

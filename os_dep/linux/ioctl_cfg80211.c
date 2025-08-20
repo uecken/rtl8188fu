@@ -2259,7 +2259,7 @@ static int rtw_cfg80211_set_probe_req_wpsp2pie(_adapter *padapter, char *buf, in
 	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);	
 
 #ifdef CONFIG_DEBUG_CFG80211
-	DBG_8192C("%s, ielen=%d\n", __func__, len);
+	DBG_871X("%s, ielen=%d\n", __func__, len);
 #endif
 	
 	if(len>0)
@@ -2267,7 +2267,7 @@ static int rtw_cfg80211_set_probe_req_wpsp2pie(_adapter *padapter, char *buf, in
 		if((wps_ie = rtw_get_wps_ie(buf, len, NULL, &wps_ielen)))
 		{
 			#ifdef CONFIG_DEBUG_CFG80211
-			DBG_8192C("probe_req_wps_ielen=%d\n", wps_ielen);
+			DBG_871X("probe_req_wps_ielen=%d\n", wps_ielen);
 			#endif
 			
 			if(pmlmepriv->wps_probe_req_ie)
@@ -2299,7 +2299,7 @@ static int rtw_cfg80211_set_probe_req_wpsp2pie(_adapter *padapter, char *buf, in
 			u8 listen_ch_attr[5];
 
 			#ifdef CONFIG_DEBUG_CFG80211
-			DBG_8192C("probe_req_p2p_ielen=%d\n", p2p_ielen);
+			DBG_871X("probe_req_p2p_ielen=%d\n", p2p_ielen);
 			#endif
 			
 			if(pmlmepriv->p2p_probe_req_ie)
@@ -2336,7 +2336,7 @@ static int rtw_cfg80211_set_probe_req_wpsp2pie(_adapter *padapter, char *buf, in
 		wfd_ie = rtw_get_wfd_ie(buf, len, NULL, &wfd_ielen);
 		if (wfd_ie) {
 			#ifdef CONFIG_DEBUG_CFG80211
-			DBG_8192C("probe_req_wfd_ielen=%d\n", wfd_ielen);
+			DBG_871X("probe_req_wfd_ielen=%d\n", wfd_ielen);
 			#endif
 
 			if (rtw_mlme_update_wfd_ie_data(pmlmepriv, MLME_PROBE_REQ_IE, wfd_ie, wfd_ielen) != _SUCCESS)
@@ -2606,7 +2606,7 @@ if (padapter->registrypriv.mp_mode == 1)
 	//parsing request ssids, n_ssids
 	for (i = 0; i < request->n_ssids && i < RTW_SSID_SCAN_AMOUNT; i++) {
 		#ifdef CONFIG_DEBUG_CFG80211
-		DBG_8192C("ssid=%s, len=%d\n", ssids[i].ssid, ssids[i].ssid_len);
+		DBG_871X("ssid=%s, len=%d\n", ssids[i].ssid, ssids[i].ssid_len);
 		#endif
 		_rtw_memcpy(ssid[i].Ssid, ssids[i].ssid, ssids[i].ssid_len);
 		ssid[i].SsidLength = ssids[i].ssid_len;	
@@ -2692,7 +2692,7 @@ static int cfg80211_rtw_set_wiphy_params(struct wiphy *wiphy, u32 changed)
 			return ret;
 	}
 #endif
-	DBG_8192C("%s\n", __func__);
+	DBG_871X("%s\n", __func__);
 	return 0;
 }
 
@@ -2700,7 +2700,7 @@ static int cfg80211_rtw_set_wiphy_params(struct wiphy *wiphy, u32 changed)
 
 static int rtw_cfg80211_set_wpa_version(struct security_priv *psecuritypriv, u32 wpa_version)
 {	
-	DBG_8192C("%s, wpa_version=%d\n", __func__, wpa_version);
+	DBG_871X("%s, wpa_version=%d\n", __func__, wpa_version);
 	
 	if (!wpa_version) {		
 		psecuritypriv->ndisauthtype = Ndis802_11AuthModeOpen;		
@@ -2734,7 +2734,7 @@ static int rtw_cfg80211_set_wpa_version(struct security_priv *psecuritypriv, u32
 static int rtw_cfg80211_set_auth_type(struct security_priv *psecuritypriv,
 			     enum nl80211_auth_type sme_auth_type)
 {
-	DBG_8192C("%s, nl80211_auth_type=%d\n", __func__, sme_auth_type);
+	DBG_871X("%s, nl80211_auth_type=%d\n", __func__, sme_auth_type);
 
 
 	switch (sme_auth_type) {
@@ -2780,7 +2780,7 @@ static int rtw_cfg80211_set_cipher(struct security_priv *psecuritypriv, u32 ciph
 	u32 *profile_cipher = ucast ? &psecuritypriv->dot11PrivacyAlgrthm :
 		&psecuritypriv->dot118021XGrpPrivacy;
 
-	DBG_8192C("%s, ucast=%d, cipher=0x%x\n", __func__, ucast, cipher);
+	DBG_871X("%s, ucast=%d, cipher=0x%x\n", __func__, ucast, cipher);
 
 
 	if (!cipher) {
@@ -2823,7 +2823,7 @@ static int rtw_cfg80211_set_cipher(struct security_priv *psecuritypriv, u32 ciph
 		break;
 #endif
 	default:
-		DBG_8192C("Unsupported cipher: 0x%x\n", cipher);
+		DBG_871X("Unsupported cipher: 0x%x\n", cipher);
 		return -ENOTSUPP;
 	}
 
@@ -2840,7 +2840,7 @@ static int rtw_cfg80211_set_cipher(struct security_priv *psecuritypriv, u32 ciph
 
 static int rtw_cfg80211_set_key_mgt(struct security_priv *psecuritypriv, u32 key_mgt)
 {
-	DBG_8192C("%s, key_mgt=0x%x\n", __func__, key_mgt);
+	DBG_871X("%s, key_mgt=0x%x\n", __func__, key_mgt);
 
 	if (key_mgt == WLAN_AKM_SUITE_8021X)
 		//*auth_type = UMAC_AUTH_TYPE_8021X;
@@ -3503,34 +3503,54 @@ static int cfg80211_rtw_set_txpower(struct wiphy *wiphy,
 	enum tx_power_setting type, int dbm)
 #endif
 {
-#if 0
-	struct iwm_priv *iwm = wiphy_to_iwm(wiphy);
-	int ret;
+	_adapter *padapter = (_adapter *)rtw_netdev_priv(wdev->netdev);
+	HAL_DATA_TYPE *pHalData = GET_HAL_DATA(padapter);
+	struct registry_priv *regsty = adapter_to_regsty(padapter);
+	int dbm_value;
+	int ret = 0;
+
+	DBG_871X("%s: type=%d, mbm=%d\n", __func__, type, mbm);
 
 	switch (type) {
 	case NL80211_TX_POWER_AUTOMATIC:
-		return 0;
+		// 自動設定の場合は何もしない
+		DBG_871X("%s: Automatic power setting\n", __func__);
+		break;
 	case NL80211_TX_POWER_FIXED:
-		if (mbm < 0 || (mbm % 100))
-			return -EOPNOTSUPP;
+		// mBmをdBmに変換 (mBm = dBm * 100)
+		dbm_value = mbm / 100;
+		
+		if (dbm_value < 0 || dbm_value > 30) {
+			DBG_871X("%s: Invalid power value: %d dBm\n", __func__, dbm_value);
+			return -EINVAL;
+		}
 
-		if (!test_bit(IWM_STATUS_READY, &iwm->status))
-			return 0;
+		DBG_871X("%s: Setting fixed power to %d dBm\n", __func__, dbm_value);
 
-		ret = iwm_umac_set_config_fix(iwm, UMAC_PARAM_TBL_CFG_FIX,
-					      CFG_TX_PWR_LIMIT_USR,
-					      MBM_TO_DBM(mbm) * 2);
-		if (ret < 0)
-			return ret;
+		// registry_privのtarget_tx_pwr_2gを更新
+		// RTL8188Fは2.4GHzのみサポート、RF_PATH_Aのみ
+		regsty->target_tx_pwr_2g[RF_PATH_A][CCK] = dbm_value;
+		regsty->target_tx_pwr_2g[RF_PATH_A][OFDM] = dbm_value;
+		regsty->target_tx_pwr_2g[RF_PATH_A][HT_MCS0_MCS7] = dbm_value;
+		regsty->target_tx_pwr_2g[RF_PATH_A][HT_MCS8_MCS15] = dbm_value;
+		
+		// target_tx_pwr_validフラグを設定
+		regsty->target_tx_pwr_valid = _TRUE;
 
-		return iwm_tx_power_trigger(iwm);
+		// 現在のチャンネルでtxpowerを再設定
+		if (check_fwstate(&padapter->mlmepriv, _FW_LINKED)) {
+			PHY_SetTxPowerLevel8188F(padapter, pHalData->CurrentChannel);
+		} else {
+			// リンクされていない場合は、次回リンク時に適用されるようにフラグを設定
+			DBG_871X("%s: Not linked, txpower will be applied on next connection\n", __func__);
+		}
+		break;
 	default:
-		IWM_ERR(iwm, "Unsupported power type: %d\n", type);
+		DBG_871X("%s: Unsupported power type: %d\n", __func__, type);
 		return -EOPNOTSUPP;
 	}
-#endif
-	DBG_8192C("%s\n", __func__);
-	return 0;
+
+	return ret;
 }
 
 static int cfg80211_rtw_get_txpower(struct wiphy *wiphy,
@@ -3539,9 +3559,24 @@ static int cfg80211_rtw_get_txpower(struct wiphy *wiphy,
 #endif
 	int *dbm)
 {
-	DBG_8192C("%s\n", __func__);
+	_adapter *padapter = (_adapter *)rtw_netdev_priv(wdev->netdev);
+	struct registry_priv *regsty = adapter_to_regsty(padapter);
+	int current_power;
 
-	*dbm = (12);
+	DBG_871X("%s\n", __func__);
+
+	// registry_privから現在のtxpowerを取得
+	if (regsty->target_tx_pwr_valid == _TRUE) {
+		current_power = regsty->target_tx_pwr_2g[RF_PATH_A][OFDM];
+	} else {
+		// デフォルト値として12dBmを返す
+		current_power = 12;
+	}
+
+	// dBmをmBmに変換して返す
+	*dbm = current_power * 100;
+	
+	DBG_871X("%s: current power = %d dBm (%d mBm)\n", __func__, current_power, *dbm);
 	
 	return 0;
 }
