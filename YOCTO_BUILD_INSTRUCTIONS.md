@@ -37,8 +37,6 @@ mkdir -p /tmp/rtl8188fu-build
 cd /tmp/rtl8188fu-build
 
 # ソースコードのクローン
-git clone https://github.com/uecken/rtl8188fu.git
-cd rtl8188fu
 ```
 
 ### 3. ドライバのビルド
